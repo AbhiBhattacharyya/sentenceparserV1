@@ -8,5 +8,5 @@ import java.util.List;
 @Setter
 @Getter
 public class Sentence {
-private List<String>  words;
+private List<String>  word;
 }

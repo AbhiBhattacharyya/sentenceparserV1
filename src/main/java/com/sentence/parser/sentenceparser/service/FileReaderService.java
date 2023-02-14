@@ -4,6 +4,7 @@ import com.sentence.parser.sentenceparser.model.Sentence;
 import static com.sentence.parser.sentenceparser.constant.Constants.*;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ public class FileReaderService {
     @Value("classpath:large.in")
     Resource resource;
 
+    @Autowired
+    CreateXmlService createXmlService;
 
     @PostConstruct
     public Map<Integer,Sentence> readFromFile() throws IOException {
@@ -37,16 +40,20 @@ public class FileReaderService {
             if(line.isPresent() && !line.isEmpty()){
                 String[] words = line.get().split("\\s+");
                 Sentence sentence = new Sentence();
-                sentence.setWords(Arrays.stream(words)
+                sentence.setWord(Arrays.stream(words)
                         .filter(pattern.asPredicate())
                         .sorted((w1,w2)->w1.compareToIgnoreCase(w2))
                         .collect(Collectors.toList()));
 
-                if(!sentence.getWords().isEmpty()) {
+                if(!sentence.getWord().isEmpty()) {
+                    createXmlService.createXMLFile(sentence);
                     sentenceMap.put(counter++, sentence);
                 }
+
             }
         }
+
+
         log.info(""+sentenceMap.size());
         return sentenceMap;
     }
