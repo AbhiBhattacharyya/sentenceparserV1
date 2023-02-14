@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 public class FileReaderService {
     @Value("classpath:large.in")
     Resource resource;
+
+
     @PostConstruct
     public Map<Integer,Sentence> readFromFile() throws IOException {
         File file = resource.getFile();
@@ -40,13 +42,12 @@ public class FileReaderService {
                         .sorted((w1,w2)->w1.compareToIgnoreCase(w2))
                         .collect(Collectors.toList()));
 
-                sentenceMap.put(counter++,sentence);
-
-                System.out.println(counter);
+                if(!sentence.getWords().isEmpty()) {
+                    sentenceMap.put(counter++, sentence);
+                }
             }
-            //log.info(data);
         }
-
+        log.info(""+sentenceMap.size());
         return sentenceMap;
     }
 }
